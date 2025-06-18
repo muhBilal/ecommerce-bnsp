@@ -56,7 +56,7 @@ Route::prefix('admin')->group(function () {
     Route::put('/transactions/{id}/approve', [AdminTransactionController::class, 'approve'])->name('admin.transactions.approve');
     Route::put('/transactions/{id}/reject', [AdminTransactionController::class, 'reject'])->name('admin.transactions.reject');
     Route::delete('/transactions/{id}', [AdminTransactionController::class, 'destroy'])->name('admin.transactions.destroy');
-Route::get('/transactions/{id}/invoice', [TransactionController::class, 'invoice'])->name('admin.transactions.invoice');
+    Route::get('/transactions/{id}/invoice', [TransactionController::class, 'invoice'])->name('admin.transactions.invoice');
 
 
     Route::get('/store-requests', [StoreRequestController::class, 'index'])->name('admin.store_requests.index');
