@@ -27,10 +27,8 @@ Route::post('/cart/increase/{id}', [CartController::class, 'increase'])->name('c
 Route::post('/cart/decrease/{id}', [CartController::class, 'decrease'])->name('cart.decrease');
 Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout.process');
 
-//user transactions
 Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
 Route::post('/transactions/{id}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
-
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

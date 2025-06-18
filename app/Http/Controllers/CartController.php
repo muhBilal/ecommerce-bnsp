@@ -16,7 +16,6 @@ class CartController extends Controller
             ->where('carts.user_id', Auth::id())
             ->select('carts.*', 'medical_devices.name as device_name', 'medical_devices.price as price', 'medical_devices.image as device_image')
             ->get();
-        // dd($cartItems);
         return view('pages.cart.index', compact('cartItems'));
     }
 
@@ -96,7 +95,6 @@ class CartController extends Controller
                 $total += $item->price * $item->quantity;
             }
 
-            // Insert transaksi
             $transactionId = DB::table('transactions')->insertGetId([
                 'user_id' => $userId,
                 'total_price' => $total,
