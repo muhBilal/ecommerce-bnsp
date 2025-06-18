@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeviceAdminController;
 use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StoreRequestController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -25,11 +27,12 @@ Route::post('/cart/increase/{id}', [CartController::class, 'increase'])->name('c
 Route::post('/cart/decrease/{id}', [CartController::class, 'decrease'])->name('cart.decrease');
 Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout.process');
 
-Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index')->middleware('auth');
-Route::post('/transactions/{id}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel')->middleware('auth');
+//user transactions
+Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+Route::post('/transactions/{id}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
 
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::prefix('admin')->group(function () {
     Route::get('/', fn() => view('admin.dashboard'))->name('admin.dashboard');
@@ -44,8 +47,17 @@ Route::prefix('admin')->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
-    Route::get('/admin/device-types', [DeviceTypeController::class, 'index'])->name('admin.device-types.index');
-Route::post('/admin/device-types', [DeviceTypeController::class, 'store'])->name('admin.device-types.store');
-Route::put('/admin/device-types/{id}', [DeviceTypeController::class, 'update'])->name('admin.device-types.update');
-Route::delete('/admin/device-types/{id}', [DeviceTypeController::class, 'destroy'])->name('admin.device-types.destroy');
+    Route::get('/device-types', [DeviceTypeController::class, 'index'])->name('admin.device-types.index');
+    Route::post('/device-types', [DeviceTypeController::class, 'store'])->name('admin.device-types.store');
+    Route::put('/device-types/{id}', [DeviceTypeController::class, 'update'])->name('admin.device-types.update');
+    Route::delete('/device-types/{id}', [DeviceTypeController::class, 'destroy'])->name('admin.device-types.destroy');
+
+    Route::get('/transactions', [AdminTransactionController::class, 'index'])->name('admin.transactions.index');
+    Route::put('/transactions/{id}/approve', [AdminTransactionController::class, 'approve'])->name('admin.transactions.approve');
+    Route::put('/transactions/{id}/reject', [AdminTransactionController::class, 'reject'])->name('admin.transactions.reject');
+    Route::delete('/transactions/{id}', [AdminTransactionController::class, 'destroy'])->name('admin.transactions.destroy');
+
+    Route::get('/admin/store-requests', [StoreRequestController::class, 'index'])->name('admin.store_requests.index');
+Route::put('/admin/store-requests/{id}/approve', [StoreRequestController::class, 'approve'])->name('admin.store_requests.approve');
+Route::put('/admin/store-requests/{id}/reject', [StoreRequestController::class, 'reject'])->name('admin.store_requests.reject');
 });

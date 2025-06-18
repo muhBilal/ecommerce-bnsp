@@ -29,25 +29,47 @@
                 <h5 class="text-center">Admin</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                            href="{{ route('admin.dashboard') }}">
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.devices.index') }}">
-                            <i class="bi bi-hdd-network"></i> Produk
+                        <a class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}"
+                            href="{{ route('admin.users.index') }}">
+                            <i class="bi bi-people"></i> Management Users
                         </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.users.index') }}">
-                            <i class="bi bi-hdd-network"></i> Management Users
+                        <a class="nav-link {{ request()->routeIs('admin.store_requests.index') ? 'active' : '' }}"
+                            href="{{ route('admin.store_requests.index') }}">
+                            <i class="bi bi-person-check"></i> Permintaan Toko
                         </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.device-types.index') }}">
-                            <i class="bi bi-cart-check"></i> Product Type
+                        <a class="nav-link {{ request()->routeIs('admin.devices.index') ? 'active' : '' }}"
+                            href="{{ route('admin.devices.index') }}">
+                            <i class="bi bi-box-seam"></i> Produk
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.device-types.index') ? 'active' : '' }}"
+                            href="{{ route('admin.device-types.index') }}">
+                            <i class="bi bi-tags"></i> Product Type
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.transactions.index') ? 'active' : '' }}"
+                            href="{{ route('admin.transactions.index') }}">
+                            <i class="bi bi-truck"></i> Shipping Order
+                        </a>
+                    </li>
+
                     <li class="nav-item mt-3">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

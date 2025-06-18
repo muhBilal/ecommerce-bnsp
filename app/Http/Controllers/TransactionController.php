@@ -36,7 +36,6 @@ class TransactionController extends Controller
                     ->increment('quantity', $detail->quantity);
             }
 
-            // Update status transaksi
             DB::table('transactions')->where('id', $id)->update([
                 'status' => 'cancelled',
                 'updated_at' => now()
