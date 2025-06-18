@@ -12,52 +12,71 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index');
+        Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
+        Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('remove');
+        Route::post('/increase/{id}', [CartController::class, 'increase'])->name('increase');
+        Route::post('/decrease/{id}', [CartController::class, 'decrease'])->name('decrease');
+        Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
+    });
+
+    Route::prefix('transactions')->name('transactions.')->group(function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::post('/{id}/cancel', [TransactionController::class, 'cancel'])->name('cancel');
+    });
+});
 
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-Route::post('/cart/increase/{id}', [CartController::class, 'increase'])->name('cart.increase');
-Route::post('/cart/decrease/{id}', [CartController::class, 'decrease'])->name('cart.decrease');
-Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout.process');
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+// Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
 
-Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-Route::post('/transactions/{id}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
+    Route::prefix('devices')->name('devices.')->group(function () {
+        Route::get('/', [DeviceAdminController::class, 'index'])->name('index');
+        Route::get('/create', [DeviceAdminController::class, 'create'])->name('create');
+        Route::post('/', [DeviceAdminController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [DeviceAdminController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [DeviceAdminController::class, 'update'])->name('update');
+        Route::delete('/{id}', [DeviceAdminController::class, 'destroy'])->name('destroy');
+    });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::put('/{id}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
+    });
 
-Route::prefix('admin')->group(function () {
-    Route::get('/', fn() => view('admin.dashboard'))->name('admin.dashboard');
-    Route::get('/devices', [DeviceAdminController::class, 'index'])->name('admin.devices.index');
-    Route::get('/devices/create', [DeviceAdminController::class, 'create'])->name('admin.devices.create');
-    Route::post('/devices', [DeviceAdminController::class, 'store'])->name('admin.devices.store');
-    Route::get('/devices/{id}/edit', [DeviceAdminController::class, 'edit'])->name('admin.devices.edit');
-    Route::put('/devices/{id}', [DeviceAdminController::class, 'update'])->name('admin.devices.update');
-    Route::delete('/devices/{id}', [DeviceAdminController::class, 'destroy'])->name('admin.devices.destroy');
+    Route::prefix('device-types')->name('device-types.')->group(function () {
+        Route::get('/', [DeviceTypeController::class, 'index'])->name('index');
+        Route::post('/', [DeviceTypeController::class, 'store'])->name('store');
+        Route::put('/{id}', [DeviceTypeController::class, 'update'])->name('update');
+        Route::delete('/{id}', [DeviceTypeController::class, 'destroy'])->name('destroy');
+    });
 
-    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
-    Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::prefix('transactions')->name('transactions.')->group(function () {
+        Route::get('/', [AdminTransactionController::class, 'index'])->name('index');
+        Route::put('/{id}/approve', [AdminTransactionController::class, 'approve'])->name('approve');
+        Route::put('/{id}/reject', [AdminTransactionController::class, 'reject'])->name('reject');
+        Route::delete('/{id}', [AdminTransactionController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/invoice', [TransactionController::class, 'invoice'])->name('invoice');
+    });
 
-    Route::get('/device-types', [DeviceTypeController::class, 'index'])->name('admin.device-types.index');
-    Route::post('/device-types', [DeviceTypeController::class, 'store'])->name('admin.device-types.store');
-    Route::put('/device-types/{id}', [DeviceTypeController::class, 'update'])->name('admin.device-types.update');
-    Route::delete('/device-types/{id}', [DeviceTypeController::class, 'destroy'])->name('admin.device-types.destroy');
-
-    Route::get('/transactions', [AdminTransactionController::class, 'index'])->name('admin.transactions.index');
-    Route::put('/transactions/{id}/approve', [AdminTransactionController::class, 'approve'])->name('admin.transactions.approve');
-    Route::put('/transactions/{id}/reject', [AdminTransactionController::class, 'reject'])->name('admin.transactions.reject');
-    Route::delete('/transactions/{id}', [AdminTransactionController::class, 'destroy'])->name('admin.transactions.destroy');
-    Route::get('/transactions/{id}/invoice', [TransactionController::class, 'invoice'])->name('admin.transactions.invoice');
-
-
-    Route::get('/store-requests', [StoreRequestController::class, 'index'])->name('admin.store_requests.index');
-    Route::put('/store-requests/{id}/approve', [StoreRequestController::class, 'approve'])->name('admin.store_requests.approve');
-    Route::put('/store-requests/{id}/reject', [StoreRequestController::class, 'reject'])->name('admin.store_requests.reject');
+    Route::prefix('store-requests')->name('store_requests.')->group(function () {
+        Route::get('/', [StoreRequestController::class, 'index'])->name('index');
+        Route::put('/{id}/approve', [StoreRequestController::class, 'approve'])->name('approve');
+        Route::put('/{id}/reject', [StoreRequestController::class, 'reject'])->name('reject');
+    });
 });

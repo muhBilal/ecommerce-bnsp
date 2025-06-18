@@ -49,7 +49,7 @@
                                 Tambah ke Keranjang
                             </button>
                         @else
-                            <a href="{{ route('login.form') }}" class="btn btn-outline-secondary mt-2">
+                            <a href="{{ route('login') }}" class="btn btn-outline-secondary mt-2">
                                 Login untuk membeli
                             </a>
                         @endauth

@@ -51,7 +51,7 @@
             <h5>Total: <span id="total-price">Rp {{ number_format($total, 0, ',', '.') }}</span></h5>
         </div>
 
-        <form action="{{ route('checkout.process') }}" method="POST" class="mt-4">
+        <form action="{{ route('cart.checkout') }}" method="POST" class="mt-4">
             @csrf
             <div class="mb-3">
                 <label for="payment_method" class="form-label">Metode Pembayaran</label>

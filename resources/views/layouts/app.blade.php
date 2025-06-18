@@ -29,7 +29,7 @@
                         </li>
                     @else
                         <li class="nav-item">
-                            <a class="btn btn-outline-primary me-2" href="{{ route('login.form') }}">Login</a>
+                            <a class="btn btn-outline-primary me-2" href="{{ route('login') }}">Login</a>
                         </li>
                         <li class="nav-item">
                             <a class="btn btn-outline-success" href="{{ route('register') }}">Register</a>
