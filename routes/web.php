@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeviceAdminController;
 use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoreRequestController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -20,6 +21,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -41,8 +45,9 @@ Route::middleware('auth')->group(function () {
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
-// Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+    // Route::prefix('admin')->name('admin.')->group(function () {
+    // Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('devices')->name('devices.')->group(function () {
         Route::get('/', [DeviceAdminController::class, 'index'])->name('index');
